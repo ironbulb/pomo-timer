@@ -63,26 +63,26 @@ export default function Timer({ eventName, duration, onStart, onComplete }: Time
   const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 bg-black/80 backdrop-blur-sm rounded-lg shadow-2xl max-w-sm mx-auto border border-gray-800">
-      <h2 className="text-sm font-medium text-gray-500 mb-2">Current Task</h2>
-      <p className="text-lg font-semibold text-white mb-6 text-center">{eventName}</p>
+    <div className="flex flex-col items-center justify-center p-4 bg-black/80 backdrop-blur-sm rounded-lg shadow-2xl max-w-xs mx-auto border border-gray-800">
+      <h2 className="text-xs font-medium text-gray-500 mb-1.5">Current Task</h2>
+      <p className="text-sm font-semibold text-white mb-4 text-center">{eventName}</p>
 
-      <div className="text-7xl text-white mb-8 tracking-wider digital-font">
+      <div className="text-5xl text-white mb-6 tracking-wider digital-font">
         {formattedTime}
       </div>
 
-      <div className="flex gap-3 w-full">
+      <div className="flex gap-2 w-full">
         {!isRunning ? (
           <button
             onClick={handleStart}
-            className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-md transition-colors"
+            className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-md transition-colors"
           >
             {hasStarted ? 'Resume' : 'Start'}
           </button>
         ) : (
           <button
             onClick={handlePause}
-            className="flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md transition-colors"
+            className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-md transition-colors"
           >
             Pause
           </button>
@@ -90,7 +90,7 @@ export default function Timer({ eventName, duration, onStart, onComplete }: Time
 
         <button
           onClick={handleSkip}
-          className="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
+          className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors"
         >
           Skip
         </button>
