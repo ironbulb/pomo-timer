@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400&display=swap');
+
+@layer utilities {
+  .digital-font {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+  }
+}
