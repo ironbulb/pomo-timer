@@ -44,7 +44,7 @@ export async function GET() {
         const titleProperty = page.properties['Task '];
         let title = 'Untitled';
 
-        if (titleProperty.type === 'title' && titleProperty.title.length > 0) {
+        if (titleProperty.type === 'title' && Array.isArray(titleProperty.title) && titleProperty.title.length > 0) {
           title = titleProperty.title[0].plain_text;
         }
 
