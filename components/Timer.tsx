@@ -42,21 +42,8 @@ export default function Timer({ eventName, duration, onStart, onComplete }: Time
     return () => clearInterval(interval);
   }, [isRunning, onComplete]);
 
-  const handleStart = () => {
-    if (!hasStarted) {
-      onStart();
-      setHasStarted(true);
-    }
-    setIsRunning(true);
-  };
-
   const handlePause = () => {
-    setIsRunning(false);
-  };
-
-  const handleSkip = () => {
-    setIsRunning(false);
-    onComplete();
+    setIsRunning(!isRunning);
   };
 
   const minutes = Math.floor(timeLeft / 60);
@@ -73,27 +60,11 @@ export default function Timer({ eventName, duration, onStart, onComplete }: Time
       </div>
 
       <div className="flex gap-2 w-full">
-        {!isRunning ? (
-          <button
-            onClick={handleStart}
-            className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-md transition-colors"
-          >
-            {hasStarted ? 'Resume' : 'Start'}
-          </button>
-        ) : (
-          <button
-            onClick={handlePause}
-            className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-md transition-colors"
-          >
-            Pause
-          </button>
-        )}
-
         <button
-          onClick={handleSkip}
-          className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors"
+          onClick={handlePause}
+          className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-md transition-colors"
         >
-          Skip
+          {isRunning ? 'Pause' : 'Resume'}
         </button>
       </div>
     </div>
