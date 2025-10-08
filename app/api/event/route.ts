@@ -48,9 +48,10 @@ export async function GET() {
           title = titleProperty.title[0].plain_text;
         }
 
-        const durationInSeconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+        // Calculate remaining time from now until end
+        const remainingSeconds = Math.floor((endDate.getTime() - now.getTime()) / 1000);
 
-        return NextResponse.json({ id: page.id, title, duration: durationInSeconds });
+        return NextResponse.json({ id: page.id, title, duration: remainingSeconds });
       }
     }
 

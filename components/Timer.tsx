@@ -16,9 +16,10 @@ export default function Timer({ eventName, duration, onStart, onComplete }: Time
 
   useEffect(() => {
     setTimeLeft(duration);
-    setIsRunning(false);
-    setHasStarted(false);
-  }, [duration]);
+    setIsRunning(true); // Auto-start
+    setHasStarted(true); // Mark as started
+    onStart(); // Trigger onStart callback
+  }, [duration, onStart]);
 
   useEffect(() => {
     if (!isRunning) return;
