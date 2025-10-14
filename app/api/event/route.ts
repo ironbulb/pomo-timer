@@ -7,65 +7,44 @@ export async function GET() {
     const databaseId = process.env.NOTION_DATABASE_ID!;
     const now = new Date();
 
-    // Get all pages without filter - we'll filter in the loop
+    // Get all pages from database
     const response = await notion.databases.query({
       database_id: databaseId,
     });
 
-    console.log('=== NOTION RESPONSE ===');
-    console.log('Current server time:', now.toISOString());
-    console.log('Number of results:', response.results.length);
-
-    // Post-query filtering to find first event that is currently active
+    // Find first active event
     for (const page of response.results) {
       if (!('properties' in page)) continue;
 
       const dateProperty = page.properties['Timer'];
+      if (!dateProperty || dateProperty.type !== 'date' || !dateProperty.date) continue;
 
-      console.log('Checking page:', page.id);
-      console.log('Timer property:', JSON.stringify(dateProperty, null, 2));
+      const { start, end } = dateProperty.date;
+      if (!start || !end) continue;
 
-      if (dateProperty.type !== 'date' || !dateProperty.date) {
-        console.log('Skipping - no date property');
-        continue;
-      }
+      const startDate = new Date(start);
+      const endDate = new Date(end);
 
-      const startTime = dateProperty.date.start;
-      const endTime = dateProperty.date.end;
-
-      console.log('Start time:', startTime);
-      console.log('End time:', endTime);
-
-      if (!startTime || !endTime) {
-        console.log('Skipping - missing start or end time');
-        continue;
-      }
-
-      const startDate = new Date(startTime);
-      const endDate = new Date(endTime);
-
-      console.log('Parsed start:', startDate.toISOString());
-      console.log('Parsed end:', endDate.toISOString());
-      console.log('Is active?', startDate <= now && endDate > now);
-
-      // Check if current time is within the event's time range
+      // Check if event is currently active
       if (startDate <= now && endDate > now) {
-        // This event is currently active
         const titleProperty = page.properties['Task '];
         let title = 'Untitled';
 
-        if (titleProperty.type === 'title' && Array.isArray(titleProperty.title) && titleProperty.title.length > 0) {
+        if (titleProperty && titleProperty.type === 'title' && Array.isArray(titleProperty.title) && titleProperty.title.length > 0) {
           title = titleProperty.title[0].plain_text;
         }
 
-        // Calculate remaining time from NOW until end
-        const remainingSeconds = Math.floor((endDate.getTime() - now.getTime()) / 1000);
+        // Return remaining seconds
+        const remainingSeconds = Math.max(0, Math.floor((endDate.getTime() - now.getTime()) / 1000));
 
-        return NextResponse.json({ id: page.id, title, duration: remainingSeconds });
+        return NextResponse.json({
+          id: page.id,
+          title,
+          duration: remainingSeconds
+        });
       }
     }
 
-    // No active event found
     return NextResponse.json({ id: null });
   } catch (error) {
     console.error('Error fetching event:', error);
@@ -84,9 +63,10 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (newStatus !== 'In Progress' && newStatus !== 'Completed') {
-      return NextResponse.json({ error: 'Invalid status. Must be "In Progress" or "Completed"' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
+    // Try to update Status property (it's a status type property)
     await notion.pages.update({
       page_id: pageId,
       properties: {
