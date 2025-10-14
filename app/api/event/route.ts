@@ -5,14 +5,13 @@ export async function GET() {
   try {
     const notion = new Client({ auth: process.env.NOTION_API_KEY });
     const databaseId = process.env.NOTION_DATABASE_ID!;
-    const now = new Date();
 
     // Get all pages from database
     const response = await notion.databases.query({
       database_id: databaseId,
     });
 
-    // Find first active event
+    // Find first event with Timer set (ignore timezone, just get the duration)
     for (const page of response.results) {
       if (!('properties' in page)) continue;
 
@@ -25,8 +24,11 @@ export async function GET() {
       const startDate = new Date(start);
       const endDate = new Date(end);
 
-      // Check if event is currently active
-      if (startDate <= now && endDate > now) {
+      // Calculate total duration between start and end (in seconds)
+      const totalDuration = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+
+      // Only return events with a valid duration
+      if (totalDuration > 0) {
         const titleProperty = page.properties['Task '];
         let title = 'Untitled';
 
@@ -34,13 +36,10 @@ export async function GET() {
           title = titleProperty.title[0].plain_text;
         }
 
-        // Return remaining seconds
-        const remainingSeconds = Math.max(0, Math.floor((endDate.getTime() - now.getTime()) / 1000));
-
         return NextResponse.json({
           id: page.id,
           title,
-          duration: remainingSeconds
+          duration: totalDuration
         });
       }
     }
