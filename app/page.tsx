@@ -10,6 +10,10 @@ export default function Home() {
     refreshInterval: 60000, // Poll every minute
   });
 
+  console.log('SWR Data:', data);
+  console.log('SWR Error:', error);
+  console.log('SWR Loading:', isLoading);
+
   const handleStart = async () => {
     if (!data?.id) return;
 

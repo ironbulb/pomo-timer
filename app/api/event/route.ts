@@ -90,8 +90,8 @@ export async function PATCH(request: NextRequest) {
     await notion.pages.update({
       page_id: pageId,
       properties: {
-        'Timer': {
-          select: {
+        'Status': {
+          status: {
             name: newStatus,
           },
         },
