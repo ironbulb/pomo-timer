@@ -13,30 +13,40 @@ export async function GET() {
     });
 
     console.log('=== NOTION RESPONSE ===');
+    console.log('Current server time:', now.toISOString());
     console.log('Number of results:', response.results.length);
-    console.log('First page properties:', JSON.stringify(
-      response.results[0] && 'properties' in response.results[0]
-        ? response.results[0].properties
-        : 'No properties',
-      null,
-      2
-    ));
-    console.log('======================');
 
     // Post-query filtering to find first event that is currently active
     for (const page of response.results) {
       if (!('properties' in page)) continue;
 
       const dateProperty = page.properties['Timer'];
-      if (dateProperty.type !== 'date' || !dateProperty.date) continue;
+
+      console.log('Checking page:', page.id);
+      console.log('Timer property:', JSON.stringify(dateProperty, null, 2));
+
+      if (dateProperty.type !== 'date' || !dateProperty.date) {
+        console.log('Skipping - no date property');
+        continue;
+      }
 
       const startTime = dateProperty.date.start;
       const endTime = dateProperty.date.end;
 
-      if (!startTime || !endTime) continue;
+      console.log('Start time:', startTime);
+      console.log('End time:', endTime);
+
+      if (!startTime || !endTime) {
+        console.log('Skipping - missing start or end time');
+        continue;
+      }
 
       const startDate = new Date(startTime);
       const endDate = new Date(endTime);
+
+      console.log('Parsed start:', startDate.toISOString());
+      console.log('Parsed end:', endDate.toISOString());
+      console.log('Is active?', startDate <= now && endDate > now);
 
       // Check if current time is within the event's time range
       if (startDate <= now && endDate > now) {
