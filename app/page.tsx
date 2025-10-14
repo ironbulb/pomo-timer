@@ -1,6 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
+import { useCallback } from 'react';
 import Timer from '@/components/Timer';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -10,7 +11,7 @@ export default function Home() {
     refreshInterval: 60000, // Poll every minute
   });
 
-  const handleStart = async () => {
+  const handleStart = useCallback(async () => {
     if (!data?.id) return;
 
     try {
@@ -27,9 +28,9 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to update status to In Progress:', error);
     }
-  };
+  }, [data?.id]);
 
-  const handleComplete = async () => {
+  const handleComplete = useCallback(async () => {
     if (!data?.id) return;
 
     try {
@@ -49,7 +50,7 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to update status to Completed:', error);
     }
-  };
+  }, [data?.id, mutate]);
 
   if (isLoading) {
     return (

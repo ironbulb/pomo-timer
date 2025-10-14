@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 interface TimerProps {
   eventName: string;
@@ -11,35 +11,33 @@ interface TimerProps {
 
 export default function Timer({ eventName, duration, onStart, onComplete }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
-  const [isRunning, setIsRunning] = useState(true);
+  const [isRunning, setIsRunning] = useState(false);
+  const audio = useMemo(() => typeof Audio !== 'undefined' ? new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3') : undefined, []);
 
   useEffect(() => {
     setTimeLeft(duration);
     setIsRunning(true);
-    // Call onStart when event loads
     onStart();
-  }, [duration, onStart]);
+    // Reset timer if the event name or duration changes
+  }, [eventName, duration, onStart]);
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isRunning || timeLeft <= 0) {
+      if (timeLeft <= 0 && isRunning) {
+        // Timer finished
+        audio?.play().catch(err => console.error('Audio play failed:', err));
+        onComplete();
+        setIsRunning(false);
+      }
+      return;
+    }
 
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setIsRunning(false);
-          // Play sound when timer ends
-          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-          audio.play().catch(err => console.log('Audio play failed:', err));
-          onComplete();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning, onComplete]);
+  }, [isRunning, timeLeft, onComplete, audio]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
