@@ -13,6 +13,12 @@ export async function GET() {
     // Get all pages from database
     const response = await notion.databases.query({
       database_id: databaseId,
+      sorts: [
+        {
+          property: 'Timer',
+          direction: 'ascending',
+        },
+      ],
     });
 
     // Find first event with Timer set (ignore timezone, just get the duration)
