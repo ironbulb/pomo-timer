@@ -7,6 +7,9 @@ export async function GET() {
     const databaseId = process.env.NOTION_DATABASE_ID!;
     const now = new Date();
 
+    let nearestTask: { title: string; start: Date } | null = null;
+
+
     // Get all pages from database
     const response = await notion.databases.query({
       database_id: databaseId,
@@ -25,6 +28,20 @@ export async function GET() {
       const startDate = new Date(start);
       const endDate = new Date(end);
       const isCurrent = now >= startDate && now < endDate;
+
+      // While we're iterating, find the nearest future task
+      if (startDate > now) {
+        const titleProperty = page.properties['Task '];
+        if (titleProperty && titleProperty.type === 'title' && Array.isArray(titleProperty.title) && titleProperty.title.length > 0) {
+          const title = titleProperty.title[0].plain_text;
+          if (!nearestTask || startDate < nearestTask.start) {
+            nearestTask = {
+              title: title,
+              start: startDate,
+            };
+          }
+        }
+      }
 
       // Find the first event that is currently active
       if (isCurrent) {
@@ -47,7 +64,11 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ id: null });
+    if (nearestTask) {
+      return NextResponse.json({ id: null, title: `The next task is: ${nearestTask.title}` });
+    }
+
+    return NextResponse.json({ id: null, title: 'No active events scheduled.' });
   } catch (error) {
     console.error('Error fetching event:', error);
     return NextResponse.json({ error: 'Failed to fetch event' }, { status: 500 });
