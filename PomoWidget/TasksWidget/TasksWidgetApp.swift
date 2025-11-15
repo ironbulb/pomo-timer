@@ -12,22 +12,50 @@ struct TasksWidgetApp: App {
 }
 
 class TasksAppDelegate: NSObject, NSApplicationDelegate {
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // Launch initial widget(s) on startup
-        // This widget has filter buttons - you can click them to change filters
-        // Then click the "open in new window" button to create a dedicated pane!
+    var window: NSWindow?
 
-        WidgetManager.shared.createWidget(
-            title: "All Tasks",
-            filterMode: .combined,
-            position: .topLeft
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Create the main tabbed widget window
+        let panel = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 500),
+            styleMask: [.nonactivatingPanel, .titled, .closable, .fullSizeContentView, .resizable],
+            backing: .buffered,
+            defer: false
         )
 
-        // Optional: Start with some pre-filtered widgets too
-        // WidgetManager.shared.createWidget(title: "PhD Admin", project: "PhD Admin", position: .topRight)
+        // Configure panel appearance
+        panel.level = .floating
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.isMovableByWindowBackground = true
+        panel.titlebarAppearsTransparent = true
+        panel.titleVisibility = .hidden
+        panel.backgroundColor = .clear
+        panel.isOpaque = false
+        panel.hasShadow = true
+        panel.title = "Tasks"
+
+        // Set minimum and maximum sizes
+        panel.minSize = NSSize(width: 300, height: 200)
+        panel.maxSize = NSSize(width: 800, height: 1000)
+
+        // Create content view with tabs
+        let contentView = NSHostingView(rootView: TasksContentViewTabs())
+        panel.contentView = contentView
+
+        // Position window
+        if let screen = NSScreen.main {
+            let screenRect = screen.visibleFrame
+            let padding: CGFloat = 20
+            let x = padding
+            let y = screenRect.maxY - panel.frame.height - padding
+            panel.setFrameOrigin(NSPoint(x: x, y: y))
+        }
+
+        panel.makeKeyAndOrderFront(nil)
+        window = panel
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return false
+        return true
     }
 }

@@ -24,6 +24,7 @@ struct SchemaResponse: Codable {
 
 class TasksViewModel: ObservableObject {
     @Published var tasks: [NotionTask] = []
+    @Published var calendarEvents: [GoogleCalendarEvent] = []
     @Published var isLoading = true
     @Published var error: String?
     @Published var selectedPriority: String?
@@ -36,6 +37,7 @@ class TasksViewModel: ObservableObject {
 
     private var refreshTimer: Timer?
     private let apiClient = TasksAPIClient()
+    private let calendarService = GoogleCalendarService()
 
     init(initialPriority: String? = nil, initialStatus: String? = nil, initialProject: String? = nil) {
         self.selectedPriority = initialPriority
@@ -77,6 +79,31 @@ class TasksViewModel: ObservableObject {
                 await MainActor.run {
                     self.error = error.localizedDescription
                     self.isLoading = false
+                }
+            }
+        }
+    }
+
+    func fetchCalendarEvents(timeFilter: TimerFilter = .today) {
+        Task {
+            do {
+                let events: [GoogleCalendarEvent]
+                switch timeFilter {
+                case .today:
+                    events = try await calendarService.fetchTodayEvents()
+                case .thisWeek:
+                    events = try await calendarService.fetchThisWeekEvents()
+                default:
+                    events = try await calendarService.fetchEvents()
+                }
+
+                await MainActor.run {
+                    self.calendarEvents = events
+                }
+            } catch {
+                print("Failed to fetch calendar events: \(error)")
+                await MainActor.run {
+                    self.calendarEvents = []
                 }
             }
         }
