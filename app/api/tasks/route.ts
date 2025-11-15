@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const priorityFilter = searchParams.get('priority'); // e.g., "1", "2", "3"
     const statusFilter = searchParams.get('status'); // e.g., "Not Started", "In Progress"
+    const projectFilter = searchParams.get('project'); // e.g., "ICI", "Work"
 
     // Build filters
     const filters: any[] = [];
@@ -28,6 +29,15 @@ export async function GET(request: Request) {
         property: 'Status',
         status: {
           equals: statusFilter,
+        },
+      });
+    }
+
+    if (projectFilter) {
+      filters.push({
+        property: 'Project',
+        select: {
+          equals: projectFilter,
         },
       });
     }
@@ -103,5 +113,65 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error fetching tasks:', error);
     return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const notion = new Client({ auth: process.env.NOTION_API_KEY });
+    const databaseId = process.env.NOTION_DATABASE_ID!;
+
+    const body = await request.json();
+    const { title, priority, status, project } = body;
+
+    if (!title) {
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+    }
+
+    // Create new task in Notion
+    const response = await notion.pages.create({
+      parent: { database_id: databaseId },
+      properties: {
+        'Task ': {
+          title: [
+            {
+              text: {
+                content: title,
+              },
+            },
+          ],
+        },
+        ...(priority && {
+          'Priority': {
+            select: {
+              name: priority,
+            },
+          },
+        }),
+        ...(status && {
+          'Status': {
+            status: {
+              name: status,
+            },
+          },
+        }),
+        ...(project && {
+          'Project': {
+            select: {
+              name: project,
+            },
+          },
+        }),
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      id: response.id,
+      message: 'Task created successfully'
+    });
+  } catch (error) {
+    console.error('Error creating task:', error);
+    return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
   }
 }

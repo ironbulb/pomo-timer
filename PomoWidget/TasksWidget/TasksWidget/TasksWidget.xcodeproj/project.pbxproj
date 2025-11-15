@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		C985E1182EAF6FAB0062B221 /* PomoWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PomoWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C945C0942EC888F70023C9CB /* TasksWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TasksWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C985E11A2EAF6FAB0062B221 /* PomoWidget */ = {
+		C945C0962EC888F70023C9CB /* TasksWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PomoWidget;
+			path = TasksWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C985E1152EAF6FAB0062B221 /* Frameworks */ = {
+		C945C0912EC888F70023C9CB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -29,18 +29,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C985E10F2EAF6FAB0062B221 = {
+		C945C08B2EC888F70023C9CB = {
 			isa = PBXGroup;
 			children = (
-				C985E11A2EAF6FAB0062B221 /* PomoWidget */,
-				C985E1192EAF6FAB0062B221 /* Products */,
+				C945C0962EC888F70023C9CB /* TasksWidget */,
+				C945C0952EC888F70023C9CB /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		C985E1192EAF6FAB0062B221 /* Products */ = {
+		C945C0952EC888F70023C9CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C985E1182EAF6FAB0062B221 /* PomoWidget.app */,
+				C945C0942EC888F70023C9CB /* TasksWidget.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,64 +48,64 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C985E1172EAF6FAB0062B221 /* PomoWidget */ = {
+		C945C0932EC888F70023C9CB /* TasksWidget */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C985E1232EAF6FAC0062B221 /* Build configuration list for PBXNativeTarget "PomoWidget" */;
+			buildConfigurationList = C945C09F2EC888F80023C9CB /* Build configuration list for PBXNativeTarget "TasksWidget" */;
 			buildPhases = (
-				C985E1142EAF6FAB0062B221 /* Sources */,
-				C985E1152EAF6FAB0062B221 /* Frameworks */,
-				C985E1162EAF6FAB0062B221 /* Resources */,
+				C945C0902EC888F70023C9CB /* Sources */,
+				C945C0912EC888F70023C9CB /* Frameworks */,
+				C945C0922EC888F70023C9CB /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				C985E11A2EAF6FAB0062B221 /* PomoWidget */,
+				C945C0962EC888F70023C9CB /* TasksWidget */,
 			);
-			name = PomoWidget;
+			name = TasksWidget;
 			packageProductDependencies = (
 			);
-			productName = PomoWidget;
-			productReference = C985E1182EAF6FAB0062B221 /* PomoWidget.app */;
+			productName = TasksWidget;
+			productReference = C945C0942EC888F70023C9CB /* TasksWidget.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		C985E1102EAF6FAB0062B221 /* Project object */ = {
+		C945C08C2EC888F70023C9CB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					C985E1172EAF6FAB0062B221 = {
+					C945C0932EC888F70023C9CB = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
-			buildConfigurationList = C985E1132EAF6FAB0062B221 /* Build configuration list for PBXProject "PomoWidget" */;
+			buildConfigurationList = C945C08F2EC888F70023C9CB /* Build configuration list for PBXProject "TasksWidget" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = C985E10F2EAF6FAB0062B221;
+			mainGroup = C945C08B2EC888F70023C9CB;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = C985E1192EAF6FAB0062B221 /* Products */;
+			productRefGroup = C945C0952EC888F70023C9CB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C985E1172EAF6FAB0062B221 /* PomoWidget */,
+				C945C0932EC888F70023C9CB /* TasksWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C985E1162EAF6FAB0062B221 /* Resources */ = {
+		C945C0922EC888F70023C9CB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -115,7 +115,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C985E1142EAF6FAB0062B221 /* Sources */ = {
+		C945C0902EC888F70023C9CB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -125,7 +125,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		C985E1212EAF6FAC0062B221 /* Debug */ = {
+		C945C09D2EC888F80023C9CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -188,7 +188,7 @@
 			};
 			name = Debug;
 		};
-		C985E1222EAF6FAC0062B221 /* Release */ = {
+		C945C09E2EC888F80023C9CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -243,7 +243,7 @@
 			};
 			name = Release;
 		};
-		C985E1242EAF6FAC0062B221 /* Debug */ = {
+		C945C0A02EC888F80023C9CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -252,17 +252,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
-				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -271,7 +261,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.roicom.john.PomoWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roicom.john.TasksWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -283,7 +273,7 @@
 			};
 			name = Debug;
 		};
-		C985E1252EAF6FAC0062B221 /* Release */ = {
+		C945C0A12EC888F80023C9CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -292,17 +282,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
-				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -311,7 +291,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.roicom.john.PomoWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roicom.john.TasksWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -326,25 +306,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C985E1132EAF6FAB0062B221 /* Build configuration list for PBXProject "PomoWidget" */ = {
+		C945C08F2EC888F70023C9CB /* Build configuration list for PBXProject "TasksWidget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C985E1212EAF6FAC0062B221 /* Debug */,
-				C985E1222EAF6FAC0062B221 /* Release */,
+				C945C09D2EC888F80023C9CB /* Debug */,
+				C945C09E2EC888F80023C9CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C985E1232EAF6FAC0062B221 /* Build configuration list for PBXNativeTarget "PomoWidget" */ = {
+		C945C09F2EC888F80023C9CB /* Build configuration list for PBXNativeTarget "TasksWidget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C985E1242EAF6FAC0062B221 /* Debug */,
-				C985E1252EAF6FAC0062B221 /* Release */,
+				C945C0A02EC888F80023C9CB /* Debug */,
+				C945C0A12EC888F80023C9CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = C985E1102EAF6FAB0062B221 /* Project object */;
+	rootObject = C945C08C2EC888F70023C9CB /* Project object */;
 }

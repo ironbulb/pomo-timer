@@ -1,8 +1,8 @@
 import SwiftUI
 
 @main
-struct PomoWidgetApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+struct TasksWidgetApp: App {
+    @NSApplicationDelegateAdaptor(TasksAppDelegate.self) var appDelegate
 
     var body: some Scene {
         Settings {
@@ -11,13 +11,13 @@ struct PomoWidgetApp: App {
     }
 }
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class TasksAppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Create the floating panel window - now resizable!
+        // Create the floating panel window - resizable!
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 320, height: 180),
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 500),
             styleMask: [.nonactivatingPanel, .titled, .closable, .fullSizeContentView, .resizable],
             backing: .buffered,
             defer: false
@@ -34,19 +34,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.hasShadow = true
 
         // Set minimum and maximum sizes
-        panel.minSize = NSSize(width: 200, height: 120)
-        panel.maxSize = NSSize(width: 600, height: 400)
+        panel.minSize = NSSize(width: 300, height: 200)
+        panel.maxSize = NSSize(width: 800, height: 1000)
 
         // Create and set the content view
-        let contentView = NSHostingView(rootView: ContentView())
+        let contentView = NSHostingView(rootView: TasksContentView())
         panel.contentView = contentView
 
-        // Position window in top-right corner with padding
+        // Position window in top-left corner with padding
         if let screen = NSScreen.main {
             let screenRect = screen.visibleFrame
-            let windowRect = panel.frame
-            let x = screenRect.maxX - windowRect.width - 20
-            let y = screenRect.maxY - windowRect.height - 20
+            let x: CGFloat = 20
+            let y = screenRect.maxY - panel.frame.height - 20
             panel.setFrameOrigin(NSPoint(x: x, y: y))
         }
 
