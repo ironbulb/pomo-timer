@@ -91,7 +91,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid pageId' }, { status: 400 });
     }
 
-    if (newStatus !== 'In Progress' && newStatus !== 'Completed') {
+    if (newStatus !== 'In Progress' && newStatus !== 'Completed' && newStatus !== 'Not Started') {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
