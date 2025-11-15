@@ -100,7 +100,11 @@ export async function PATCH(request: NextRequest) {
 
     console.log('Updating page:', normalizedPageId, 'to status:', newStatus);
 
-    // Try to update Status property (it's a status type property)
+    // First, get the page to see what properties it has
+    const page = await notion.pages.retrieve({ page_id: normalizedPageId });
+    console.log('Page properties:', JSON.stringify((page as any).properties, null, 2));
+
+    // Update the Status property
     await notion.pages.update({
       page_id: normalizedPageId,
       properties: {
