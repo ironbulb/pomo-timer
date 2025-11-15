@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client';
+import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
@@ -7,7 +8,8 @@ export async function GET() {
     const databaseId = process.env.NOTION_DATABASE_ID!;
     const now = new Date();
 
-    let nearestTask: { title: string; start: Date } | null = null;
+    let nearestTask: { title: string; start: Date; source: 'notion' | 'gcal' } | null = null;
+    let currentEvent: { id: string; title: string; duration: number; source: 'notion' | 'gcal' } | null = null;
 
 
     // Get all pages from database
@@ -61,17 +63,93 @@ export async function GET() {
         // Calculate remaining duration from now
         const remainingDuration = Math.floor((endDate.getTime() - now.getTime()) / 1000);
 
-        return NextResponse.json({
-          id: page.id,
-          title,
-          // Return remaining duration, or 1 if it's less than 1
-          duration: Math.max(1, remainingDuration)
-        });
+        if (!currentEvent || startDate < new Date(currentEvent.id)) {
+          currentEvent = {
+            id: page.id,
+            title,
+            duration: Math.max(1, remainingDuration),
+            source: 'notion'
+          };
+        }
       }
     }
 
+    // Fetch Google Calendar events if configured
+    if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+      try {
+        const auth = new google.auth.GoogleAuth({
+          credentials: {
+            client_email: process.env.GOOGLE_CLIENT_EMAIL,
+            private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+          },
+          scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+        });
+
+        const calendar = google.calendar({ version: 'v3', auth });
+
+        const gcalResponse = await calendar.events.list({
+          calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
+          timeMin: new Date(now.getTime() - 60 * 60 * 1000).toISOString(), // 1 hour ago
+          timeMax: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
+          maxResults: 50,
+          singleEvents: true,
+          orderBy: 'startTime',
+        });
+
+        const gcalEvents = gcalResponse.data.items || [];
+
+        for (const event of gcalEvents) {
+          if (!event.start?.dateTime || !event.end?.dateTime) continue;
+
+          const startDate = new Date(event.start.dateTime);
+          const endDate = new Date(event.end.dateTime);
+          const isCurrent = now >= startDate && now < endDate;
+
+          // Track nearest future event
+          if (startDate > now) {
+            if (!nearestTask || startDate < nearestTask.start) {
+              nearestTask = {
+                title: event.summary || 'Untitled Event',
+                start: startDate,
+                source: 'gcal'
+              };
+            }
+          }
+
+          // Track current event
+          if (isCurrent) {
+            const remainingDuration = Math.floor((endDate.getTime() - now.getTime()) / 1000);
+
+            // Prefer the earlier event if there are overlaps
+            if (!currentEvent || startDate.getTime() < Number(currentEvent.id)) {
+              currentEvent = {
+                id: event.id || startDate.toISOString(),
+                title: `📅 ${event.summary || 'Untitled Event'}`,
+                duration: Math.max(1, remainingDuration),
+                source: 'gcal'
+              };
+            }
+          }
+        }
+      } catch (gcalError) {
+        console.error('Error fetching Google Calendar events:', gcalError);
+        // Continue without calendar events if there's an error
+      }
+    }
+
+    // Return current event if found
+    if (currentEvent) {
+      return NextResponse.json({
+        id: currentEvent.id,
+        title: currentEvent.title,
+        duration: currentEvent.duration
+      });
+    }
+
+    // Return nearest future task if found
     if (nearestTask) {
-      return NextResponse.json({ id: null, title: `The next task is: ${nearestTask.title}` });
+      const prefix = nearestTask.source === 'gcal' ? '📅 ' : '';
+      return NextResponse.json({ id: null, title: `The next task is: ${prefix}${nearestTask.title}` });
     }
 
     return NextResponse.json({ id: null, title: 'No active events scheduled.' });
