@@ -30,10 +30,17 @@ export async function GET() {
       priorityOptions = properties['Priority'].select.options.map((opt: any) => opt.name);
     }
 
-    // Get Status options
+    // Get Status options and map to our names
     let statusOptions: string[] = [];
     if (properties['Status'] && properties['Status'].type === 'status' && 'status' in properties['Status']) {
-      statusOptions = properties['Status'].status.options.map((opt: any) => opt.name);
+      const notionStatuses = properties['Status'].status.options.map((opt: any) => opt.name);
+      // Map Notion's status names to our names
+      const statusMap: { [key: string]: string } = {
+        'Done': 'Completed',
+        'Not started': 'Not Started',
+        'In progress': 'In Progress',
+      };
+      statusOptions = notionStatuses.map((status: string) => statusMap[status] || status);
     }
 
     return NextResponse.json({
