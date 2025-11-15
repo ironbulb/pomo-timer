@@ -20,18 +20,26 @@ class TasksViewModel: ObservableObject {
     @Published var isLoading = true
     @Published var error: String?
     @Published var selectedPriority: String?
+    @Published var selectedStatus: String?
+    @Published var selectedProject: String?
 
     private var refreshTimer: Timer?
     private let apiClient = TasksAPIClient()
 
-    init(initialPriority: String? = nil) {
+    init(initialPriority: String? = nil, initialStatus: String? = nil, initialProject: String? = nil) {
         self.selectedPriority = initialPriority
+        self.selectedStatus = initialStatus
+        self.selectedProject = initialProject
     }
 
     func fetchTasks() {
         Task {
             do {
-                let response = try await apiClient.fetchTasks(priority: selectedPriority)
+                let response = try await apiClient.fetchTasks(
+                    priority: selectedPriority,
+                    status: selectedStatus,
+                    project: selectedProject
+                )
 
                 await MainActor.run {
                     self.tasks = response.tasks
@@ -51,6 +59,48 @@ class TasksViewModel: ObservableObject {
         selectedPriority = priority
         isLoading = true
         fetchTasks()
+    }
+
+    func filterByStatus(_ status: String?) {
+        selectedStatus = status
+        isLoading = true
+        fetchTasks()
+    }
+
+    func filterByProject(_ project: String?) {
+        selectedProject = project
+        isLoading = true
+        fetchTasks()
+    }
+
+    func applyFilters(priority: String? = nil, status: String? = nil, project: String? = nil) {
+        selectedPriority = priority
+        selectedStatus = status
+        selectedProject = project
+        isLoading = true
+        fetchTasks()
+    }
+
+    func createTask(title: String, priority: String? = nil, status: String? = nil, project: String? = nil) {
+        Task {
+            do {
+                try await apiClient.createTask(
+                    title: title,
+                    priority: priority,
+                    status: status,
+                    project: project
+                )
+
+                // Refresh tasks after creation
+                await MainActor.run {
+                    self.fetchTasks()
+                }
+            } catch {
+                await MainActor.run {
+                    self.error = "Failed to create task"
+                }
+            }
+        }
     }
 
     func toggleTaskCompletion(taskId: String) {
@@ -108,7 +158,7 @@ class TasksViewModel: ObservableObject {
 class TasksAPIClient {
     private let baseURL = "https://pomo-timer-eta.vercel.app"
 
-    func fetchTasks(priority: String? = nil, status: String? = nil) async throws -> TasksAPIResponse {
+    func fetchTasks(priority: String? = nil, status: String? = nil, project: String? = nil) async throws -> TasksAPIResponse {
         var urlString = "\(baseURL)/api/tasks"
 
         // Add query parameters
@@ -118,6 +168,9 @@ class TasksAPIClient {
         }
         if let status = status {
             queryItems.append("status=\(status)")
+        }
+        if let project = project {
+            queryItems.append("project=\(project)")
         }
 
         if !queryItems.isEmpty {
@@ -139,6 +192,30 @@ class TasksAPIClient {
         return try decoder.decode(TasksAPIResponse.self, from: data)
     }
 
+    func createTask(title: String, priority: String? = nil, status: String? = nil, project: String? = nil) async throws {
+        guard let url = URL(string: "\(baseURL)/api/tasks") else {
+            throw TasksAPIError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        var body: [String: Any] = ["title": title]
+        if let priority = priority { body["priority"] = priority }
+        if let status = status { body["status"] = status }
+        if let project = project { body["project"] = project }
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw TasksAPIError.serverError
+        }
+    }
+
     func updateTaskStatus(taskId: String, newStatus: String) async throws {
         guard let url = URL(string: "\(baseURL)/api/event") else {
             throw TasksAPIError.invalidURL
@@ -151,10 +228,17 @@ class TasksAPIClient {
         let body = ["pageId": taskId, "newStatus": newStatus]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw TasksAPIError.serverError
+        }
+
+        if !(200...299).contains(httpResponse.statusCode) {
+            // Print error for debugging
+            if let errorString = String(data: data, encoding: .utf8) {
+                print("Status update failed: \(httpResponse.statusCode) - \(errorString)")
+            }
             throw TasksAPIError.serverError
         }
     }

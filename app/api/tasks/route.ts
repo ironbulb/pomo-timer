@@ -129,11 +129,19 @@ export async function POST(request: Request) {
     const databaseId = process.env.NOTION_DATABASE_ID!;
 
     const body = await request.json();
-    const { title, priority, status, project } = body;
+    const { title, priority, status, project, area, checked } = body;
 
     if (!title) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
+
+    // Map widget status names to Notion status names
+    const statusMapping: { [key: string]: string } = {
+      'Completed': 'Done',
+      'Not Started': 'Not started',
+      'In Progress': 'In progress',
+    };
+    const notionStatus = status ? (statusMapping[status] || status) : undefined;
 
     // Create new task in Notion
     const response = await notion.pages.create({
@@ -148,6 +156,18 @@ export async function POST(request: Request) {
             },
           ],
         },
+        ...(typeof checked === 'boolean' && {
+          'checkbox': {
+            checkbox: checked,
+          },
+        }),
+        ...(area && {
+          'Area': {
+            select: {
+              name: area,
+            },
+          },
+        }),
         ...(priority && {
           'Priority': {
             select: {
@@ -155,10 +175,10 @@ export async function POST(request: Request) {
             },
           },
         }),
-        ...(status && {
+        ...(notionStatus && {
           'Status': {
             status: {
-              name: status,
+              name: notionStatus,
             },
           },
         }),
