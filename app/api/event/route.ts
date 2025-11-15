@@ -95,9 +95,14 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
+    // Normalize page ID (remove dashes if present, Notion accepts both formats)
+    const normalizedPageId = pageId.replace(/-/g, '');
+
+    console.log('Updating page:', normalizedPageId, 'to status:', newStatus);
+
     // Try to update Status property (it's a status type property)
     await notion.pages.update({
-      page_id: pageId,
+      page_id: normalizedPageId,
       properties: {
         'Status': {
           status: {
@@ -108,8 +113,12 @@ export async function PATCH(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating event:', error);
-    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
+    console.error('Error details:', error.message, error.body);
+    return NextResponse.json({
+      error: 'Failed to update event',
+      details: error.message
+    }, { status: 500 });
   }
 }
