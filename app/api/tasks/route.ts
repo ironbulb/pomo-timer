@@ -78,10 +78,17 @@ export async function GET(request: Request) {
         priority = props['Priority'].select.name;
       }
 
-      // Extract Status
+      // Extract Status and map Notion's status names to our names
       let status = 'Not Started';
       if (props['Status'] && props['Status'].type === 'status' && props['Status'].status) {
-        status = props['Status'].status.name;
+        const notionStatus = props['Status'].status.name;
+        // Map Notion's default status names to our names
+        const statusMap: { [key: string]: string } = {
+          'Done': 'Completed',
+          'Not started': 'Not Started',
+          'In progress': 'In Progress',
+        };
+        status = statusMap[notionStatus] || notionStatus;
       }
 
       // Extract Timer dates

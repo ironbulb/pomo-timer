@@ -91,18 +91,19 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid pageId' }, { status: 400 });
     }
 
-    if (newStatus !== 'In Progress' && newStatus !== 'Completed' && newStatus !== 'Not Started') {
-      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
-    }
+    // Map our status names to Notion's default status names
+    const statusMapping: { [key: string]: string } = {
+      'Completed': 'Done',
+      'Not Started': 'Not started',
+      'In Progress': 'In progress',
+    };
+
+    const notionStatus = statusMapping[newStatus] || newStatus;
 
     // Normalize page ID (remove dashes if present, Notion accepts both formats)
     const normalizedPageId = pageId.replace(/-/g, '');
 
-    console.log('Updating page:', normalizedPageId, 'to status:', newStatus);
-
-    // First, get the page to see what properties it has
-    const page = await notion.pages.retrieve({ page_id: normalizedPageId });
-    console.log('Page properties:', JSON.stringify((page as any).properties, null, 2));
+    console.log('Updating page:', normalizedPageId, 'from status:', newStatus, 'to Notion status:', notionStatus);
 
     // Update the Status property
     await notion.pages.update({
@@ -110,7 +111,7 @@ export async function PATCH(request: NextRequest) {
       properties: {
         'Status': {
           status: {
-            name: newStatus,
+            name: notionStatus,
           },
         },
       },
