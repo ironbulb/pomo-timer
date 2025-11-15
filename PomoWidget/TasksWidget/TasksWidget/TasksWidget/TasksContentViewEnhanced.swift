@@ -100,6 +100,8 @@ struct TasksContentViewEnhanced: View {
         .onAppear {
             viewModel.fetchSchema()
             viewModel.fetchTasks()
+            // Fetch today's calendar events for the old widget view
+            viewModel.fetchCalendarEvents(timeFilter: .today)
             viewModel.startAutoRefresh()
         }
     }
@@ -318,6 +320,17 @@ struct TasksContentViewEnhanced: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 8) {
+                        // Calendar events section
+                        if !viewModel.calendarEvents.isEmpty {
+                            ForEach(viewModel.calendarEvents) { event in
+                                CalendarEventRow(event: event)
+                            }
+
+                            Divider()
+                                .padding(.vertical, 4)
+                        }
+
+                        // Tasks section
                         ForEach(viewModel.tasks) { task in
                             TaskRow(task: task, onToggleComplete: { taskId in
                                 viewModel.toggleTaskCompletion(taskId: taskId)
